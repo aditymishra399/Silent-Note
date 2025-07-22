@@ -1,26 +1,34 @@
 const db = firebase.database();
 let currentUser = null;
 
+// 🔐 Signup
 function signup() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
+
   firebase.auth().createUserWithEmailAndPassword(email, password)
     .then(() => alert("Signup Success"))
-    .catch(e => alert("Signup Error: " + e.message));
+    .catch(error => alert("Signup Error: " + error.message));
 }
 
+// 🔓 Login
 function login() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
+
   firebase.auth().signInWithEmailAndPassword(email, password)
     .then(() => alert("Login Success"))
-    .catch(e => alert("Login Error: " + e.message));
+    .catch(error => alert("Login Error: " + error.message));
 }
 
+// 🚪 Logout
 function logout() {
-  firebase.auth().signOut();
+  firebase.auth().signOut()
+    .then(() => alert("Logout Success"))
+    .catch(error => alert("Logout Error: " + error.message));
 }
 
+// 👀 Auth State Checker
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
     currentUser = user;
@@ -32,25 +40,28 @@ firebase.auth().onAuthStateChanged(user => {
   }
 });
 
+// 📝 Add Note
 function addNote() {
-  const input = document.getElementById("noteInput");
-  const noteText = input.value.trim();
+  const noteText = document.getElementById("noteInput").value.trim();
   if (noteText && currentUser) {
     const ref = db.ref("users/" + currentUser.uid + "/notes").push();
     ref.set({ text: noteText });
-    input.value = "";
+    document.getElementById("noteInput").value = "";
   }
 }
 
+// ❌ Delete Note
 function deleteNote(noteId) {
   if (currentUser) {
     db.ref("users/" + currentUser.uid + "/notes/" + noteId).remove();
   }
 }
 
+// 📥 Load Notes
 function loadNotes() {
   const list = document.getElementById("notesList");
   const ref = db.ref("users/" + currentUser.uid + "/notes");
+
   ref.on("value", snapshot => {
     list.innerHTML = "";
     snapshot.forEach(child => {
