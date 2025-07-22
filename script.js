@@ -1,19 +1,20 @@
-function addNote() {
-  const input = document.getElementById("noteInput");
-  const noteText = input.value.trim();
+function saveNotes() {
+  const notes = [];
+  document.querySelectorAll("#notesList li").forEach(li => {
+    const text = li.childNodes[0].textContent.trim();
+    notes.push(text);
+  });
+  localStorage.setItem("notes", JSON.stringify(notes));
+}
 
-  if (noteText !== "") {
+function loadNotes() {
+  const savedNotes = JSON.parse(localStorage.getItem("notes") || "[]");
+  savedNotes.forEach(note => {
     const list = document.getElementById("notesList");
     const li = document.createElement("li");
-    li.innerHTML = `${noteText} <button onclick="deleteNote(this)">❌</button>`;
+    li.innerHTML = `${note} <button onclick="deleteNote(this)">❌</button>`;
     list.appendChild(li);
-    input.value = "";
-    saveNotes();
-  }
+  });
 }
 
-function deleteNote(button) {
-  const li = button.parentElement;
-  li.remove();
-  saveNotes();
-}
+window.onload = loadNotes;
