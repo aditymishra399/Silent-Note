@@ -1,13 +1,12 @@
 const db = firebase.database();
 let currentUser = null;
 
-// AUTH FUNCTIONS
 function signup() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   firebase.auth().createUserWithEmailAndPassword(email, password)
     .then(() => alert("Signup Success"))
-    .catch(e => alert(e.message));
+    .catch(e => alert("Signup Error: " + e.message));
 }
 
 function login() {
@@ -15,14 +14,13 @@ function login() {
   const password = document.getElementById("password").value;
   firebase.auth().signInWithEmailAndPassword(email, password)
     .then(() => alert("Login Success"))
-    .catch(e => alert(e.message));
+    .catch(e => alert("Login Error: " + e.message));
 }
 
 function logout() {
   firebase.auth().signOut();
 }
 
-// AUTH STATE LISTENER
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
     currentUser = user;
@@ -34,7 +32,6 @@ firebase.auth().onAuthStateChanged(user => {
   }
 });
 
-// NOTE FUNCTIONS
 function addNote() {
   const input = document.getElementById("noteInput");
   const noteText = input.value.trim();
